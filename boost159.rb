@@ -4,7 +4,7 @@ class Boost159 < Formula
   head "https://github.com/boostorg/boost.git"
 
   stable do
-    url "https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.tar.bz2"
+    url "https://boostorg.jfrog.io/artifactory/main/release/1.64.0/source/boost_1_64_0.tar.bz2"
 
     # Remove for > 1.64.0
     # "Replace boost::serialization::detail::get_data function."
