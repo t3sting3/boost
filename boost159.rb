@@ -1,4 +1,4 @@
-class Boost < Formula
+class Boost159 < Formula
   desc "Collection of portable C++ source libraries"
   homepage "https://www.boost.org/"
   head "https://github.com/boostorg/boost.git"
