@@ -1,4 +1,4 @@
-class Boost < Formula
+class Boost172 < Formula
   desc "Collection of portable C++ source libraries"
   homepage "https://www.boost.org/"
   revision 3
