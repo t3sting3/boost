@@ -1,8 +1,8 @@
-class Boost168 < Formula
+
+class Boost170 < Formula
   desc "Collection of portable C++ source libraries"
   homepage "https://www.boost.org/"
-  url "https://boostorg.jfrog.io/artifactory/main/release/1.68.0/source/boost_1_68_0.tar.bz2"
-  revision 1
+  url "https://boostorg.jfrog.io/artifactory/main/release/1.70.0/source/boost_1_70_0.tar.bz2"
   head "https://github.com/boostorg/boost.git"
 
   depends_on "icu4c"
@@ -31,14 +31,18 @@ class Boost168 < Formula
     bootstrap_args << "--without-libraries=#{without_libraries.join(",")}"
 
     # layout should be synchronized with boost-python and boost-mpi
+    #
+    # --no-cmake-config should be dropped if possible in next version
     args = %W[
       --prefix=#{prefix}
       --libdir=#{lib}
       -d2
       -j#{ENV.make_jobs}
-      --layout=tagged
+      --layout=tagged-1.66
       --user-config=user-config.jam
+      --no-cmake-config
       -sNO_LZMA=1
+      -sNO_ZSTD=1
       install
       threading=multi,single
       link=shared,static
@@ -89,7 +93,7 @@ class Boost168 < Formula
         return 0;
       }
     EOS
-    system ENV.cxx, "test.cpp", "-std=c++1y", "-L#{lib}", "-lboost_system", "-o", "test"
+    system ENV.cxx, "test.cpp", "-std=c++14", "-stdlib=libc++", "-o", "test"
     system "./test"
   end
 end
