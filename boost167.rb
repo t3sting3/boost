@@ -7,6 +7,7 @@ class Boost < Formula
 
   stable do
     url "https://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.bz2"
+    sha256 "2684c972994ee57fc5632e03bf044746f6eb45d4920c343937a465fd67a5adba"
 
     # Remove for > 1.67.0
     # Fix "error: no member named 'next' in namespace 'boost'"
