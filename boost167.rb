@@ -6,7 +6,7 @@ class Boost < Formula
   head "https://github.com/boostorg/boost.git"
 
   stable do
-    url "http://downloads.sourceforge.net/project/boost/boost/boost_1_67_0.tar.bz2"
+    url "https://sourceforge.net/projects/boost/files/boost/1.61.0/boost_1_61_0.tar.bz2"
 
     # Remove for > 1.67.0
     # Fix "error: no member named 'next' in namespace 'boost'"
