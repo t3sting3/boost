@@ -12,13 +12,6 @@ class Boost175 < Formula
     regex(/>Version v?(\d+(?:\.\d+)+)</i)
   end
 
-  bottle do
-    sha256 cellar: :any, arm64_big_sur: "df216d9ac1aada2283fc5cca14b57381b9243a0743208a2a59201b10ac706bfb"
-    sha256 cellar: :any, big_sur:       "9198af08180876d70b16decb22aa3237272a156b40a4f57e83840a3d30d2ca70"
-    sha256 cellar: :any, catalina:      "3cea2aeddabbdb531b0db467d8d1661ec87a36ddc61a35f6b7dab5b9c75a4ed5"
-    sha256 cellar: :any, mojave:        "705f06d5ac7c2615ae42158816eb3a738a4bff05b0ac18f8ef7d223fdcf9e75e"
-  end
-
   depends_on "icu4c"
 
   uses_from_macos "bzip2"
