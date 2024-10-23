@@ -7,7 +7,7 @@ class Boost168 < Formula
 
   depends_on "icu4c"
 
-  needs :cxx14
+  needs :cxx17
 
   def install
     # Force boost to compile with the desired compiler
