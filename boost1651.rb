@@ -31,7 +31,7 @@ class Boost1651 < Formula
     end
 
     # Handle libraries that will not be built.
-    without_libraries = ["python", "mpi"]
+    without_libraries = ["python", "mpi", "log"]
 
     # Boost.Log cannot be built using Apple GCC at the moment. Disabled
     # on such systems.
@@ -63,7 +63,7 @@ class Boost1651 < Formula
 
     # Trunk starts using "clang++ -x c" to select C compiler which breaks C++11
     # handling using ENV.cxx11. Using "cxxflags" and "linkflags" still works.
-    args << "cxxflags=-std=c++11"
+    args << "cxxflags=-std=c++14"
     if ENV.compiler == :clang
       args << "cxxflags=-stdlib=libc++" << "linkflags=-stdlib=libc++"
     end
@@ -106,7 +106,7 @@ class Boost1651 < Formula
         return 0;
       }
     EOS
-    system ENV.cxx, "test.cpp", "-std=c++1y", "-L#{lib}", "-lboost_system", "-o", "test"
+    system ENV.cxx, "test.cpp", "-std=c++14", "-L#{lib}", "-lboost_system", "-o", "test"
     system "./test"
   end
 end
