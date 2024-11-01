@@ -3,7 +3,6 @@ class Boost1651 < Formula
   homepage "https://www.boost.org/"
   url "https://boostorg.jfrog.io/artifactory/main/release/1.74.0/source/boost_1_74_0.tar.bz2"
   license "BSL-1.0"
-  head "https://github.com/boostorg/boost.git"
 
   depends_on "icu4c"
 
