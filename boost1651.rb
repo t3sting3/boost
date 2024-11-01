@@ -1,30 +1,34 @@
 class Boost1651 < Formula
   desc "Collection of portable C++ source libraries"
   homepage "https://www.boost.org/"
-  url "https://boostorg.jfrog.io/artifactory/main/release/1.65.1/source/boost_1_65_1.tar.bz2"
-  sha256 "9807a5d16566c57fd74fb522764e0b134a8bbe6b6e8967b83afefd30dcd3be81"
-  revision 1
+  url "https://boostorg.jfrog.io/artifactory/main/release/1.74.0/source/boost_1_74_0.tar.bz2"
+  license "BSL-1.0"
+  head "https://github.com/boostorg/boost.git"
 
-  keg_only :versioned_formula
+  depends_on "icu4c"
 
   uses_from_macos "bzip2"
   uses_from_macos "zlib"
 
+  # Fix build on 64-bit arm
+  patch do
+    url "https://github.com/boostorg/build/commit/456be0b7ecca065fbccf380c2f51e0985e608ba0.patch?full_index=1"
+    sha256 "e7a78145452fc145ea5d6e5f61e72df7dcab3a6eebb2cade6b4cfae815687f3a"
+    directory "tools/build"
+  end
+
   def install
     # Force boost to compile with the desired compiler
     open("user-config.jam", "a") do |file|
-      if OS.mac?
-        file.write "using darwin : : #{ENV.cxx} ;\n"
-      else
-        file.write "using gcc : : #{ENV.cxx} ;\n"
-      end
+      file.write "using darwin : : #{ENV.cxx} ;\n"
     end
 
     # libdir should be set by --prefix but isn't
+    icu4c_prefix = Formula["icu4c"].opt_prefix
     bootstrap_args = %W[
       --prefix=#{prefix}
       --libdir=#{lib}
-      --without-icu
+      --with-icu=#{icu4c_prefix}
     ]
 
     # Handle libraries that will not be built.
@@ -36,20 +40,22 @@ class Boost1651 < Formula
 
     bootstrap_args << "--without-libraries=#{without_libraries.join(",")}"
 
-    # layout should be synchronized with boost-python
+    # layout should be synchronized with boost-python and boost-mpi
     args = %W[
       --prefix=#{prefix}
       --libdir=#{lib}
       -d2
       -j#{ENV.make_jobs}
-      --layout=tagged
+      --layout=tagged-1.66
       --user-config=user-config.jam
+      -sNO_LZMA=1
+      -sNO_ZSTD=1
       install
       threading=multi,single
       link=shared,static
     ]
-	
-	# Boost is using "clang++ -x c" to select C compiler which breaks C++14
+
+    # Boost is using "clang++ -x c" to select C compiler which breaks C++14
     # handling using ENV.cxx14. Using "cxxflags" and "linkflags" still works.
     args << "cxxflags=-std=c++14"
     args << "cxxflags=-stdlib=libc++" << "linkflags=-stdlib=libc++" if ENV.compiler == :clang
@@ -59,8 +65,21 @@ class Boost1651 < Formula
     system "./b2", *args
   end
 
+  def caveats
+    s = ""
+    # ENV.compiler doesn't exist in caveats. Check library availability
+    # instead.
+    if Dir["#{lib}/libboost_log*"].empty?
+      s += <<~EOS
+        Building of Boost.Log is disabled because it requires newer GCC or Clang.
+      EOS
+    end
+
+    s
+  end
+
   test do
-    (testpath/"test.cpp").write <<~CPP
+    (testpath/"test.cpp").write <<~EOS
       #include <boost/algorithm/string.hpp>
       #include <string>
       #include <vector>
@@ -78,22 +97,8 @@ class Boost1651 < Formula
         assert(strVec[1]=="b");
         return 0;
       }
-    CPP
-    system ENV.cxx, "-I#{Formula["boost1651"].opt_include}", "test.cpp", "-std=c++14", "-o", "test"
+    EOS
+    system ENV.cxx, "test.cpp", "-std=c++14", "-stdlib=libc++", "-o", "test"
     system "./test"
   end
 end
-
-__END__
-diff -Nur boost_1_60_0/boost/graph/adjacency_matrix.hpp boost_1_60_0-patched/boost/graph/adjacency_matrix.hpp
---- boost_1_60_0/boost/graph/adjacency_matrix.hpp	2015-10-23 05:50:19.000000000 -0700
-+++ boost_1_60_0-patched/boost/graph/adjacency_matrix.hpp	2016-01-19 14:03:29.000000000 -0800
-@@ -443,7 +443,7 @@
-     // graph type. Instead, use directedS, which also provides the
-     // functionality required for a Bidirectional Graph (in_edges,
-     // in_degree, etc.).
--    BOOST_STATIC_ASSERT(type_traits::ice_not<(is_same<Directed, bidirectionalS>::value)>::value);
-+    BOOST_STATIC_ASSERT(!(is_same<Directed, bidirectionalS>::value));
-
-     typedef typename mpl::if_<is_directed,
-                                     bidirectional_tag, undirected_tag>::type
