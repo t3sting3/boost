@@ -1,35 +1,14 @@
 class Boost1651 < Formula
   desc "Collection of portable C++ source libraries"
   homepage "https://www.boost.org/"
-  url "https://downloads.sourceforge.net/project/boost/boost/1.60.0/boost_1_60_0.tar.bz2"
-  sha256 "686affff989ac2488f79a97b9479efb9f2abae035b5ed4d8226de6857933fd3b"
-  license "BSL-1.0"
+  url "https://boostorg.jfrog.io/artifactory/main/release/1.65.1/source/boost_1_65_1.tar.bz2"
+  sha256 "9807a5d16566c57fd74fb522764e0b134a8bbe6b6e8967b83afefd30dcd3be81"
+  revision 1
 
   keg_only :versioned_formula
 
   uses_from_macos "bzip2"
   uses_from_macos "zlib"
-
-  # Handle compile failure with boost/graph/adjacency_matrix.hpp
-  # https://github.com/Homebrew/homebrew/pull/48262
-  # https://svn.boost.org/trac/boost/ticket/11880
-  # patch derived from https://github.com/boostorg/graph/commit/1d5f43d
-  patch :DATA
-
-  # Fix auto-pointer registration in 1.60
-  # https://github.com/boostorg/python/pull/59
-  # patch derived from https://github.com/boostorg/python/commit/f2c465f
-  patch do
-    url "https://raw.githubusercontent.com/Homebrew/formula-patches/9e56b450f3f5fd8095540e43184b13ab2824f911/boost/boost1_60_0_python_class_metadata.diff"
-    sha256 "1a470c3a2738af409f68e3301eaecd8d07f27a8965824baf8aee0adef463b844"
-  end
-
-  # Fix build on Xcode 11.4
-  patch do
-    url "https://github.com/boostorg/build/commit/b3a59d265929a213f02a451bb63cea75d668a4d9.patch?full_index=1"
-    sha256 "04a4df38ed9c5a4346fbb50ae4ccc948a1440328beac03cb3586c8e2e241be08"
-    directory "tools/build"
-  end
 
   def install
     # Force boost to compile with the desired compiler
