@@ -81,7 +81,7 @@ class Boost1651 < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <boost/algorithm/string.hpp>
       #include <string>
       #include <vector>
