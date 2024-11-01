@@ -34,7 +34,11 @@ class Boost1651 < Formula
   def install
     # Force boost to compile with the desired compiler
     open("user-config.jam", "a") do |file|
-      file.write "using darwin : : #{ENV.cxx} ;\n"
+      if OS.mac?
+        file.write "using darwin : : #{ENV.cxx} ;\n"
+      else
+        file.write "using gcc : : #{ENV.cxx} ;\n"
+      end
     end
 
     # libdir should be set by --prefix but isn't
@@ -65,6 +69,11 @@ class Boost1651 < Formula
       threading=multi,single
       link=shared,static
     ]
+	
+	# Boost is using "clang++ -x c" to select C compiler which breaks C++14
+    # handling using ENV.cxx14. Using "cxxflags" and "linkflags" still works.
+    args << "cxxflags=-std=c++14"
+    args << "cxxflags=-stdlib=libc++" << "linkflags=-stdlib=libc++" if ENV.compiler == :clang
 
     system "./bootstrap.sh", *bootstrap_args
     system "./b2", "headers"
@@ -103,9 +112,8 @@ class Boost1651 < Formula
         assert(strVec[1]=="b");
         return 0;
       }
-    EOS
-    system ENV.cxx, "-I#{include}", "test.cpp", "-std=c++1y", "-L#{lib}",
-           "-lboost_system", "-o", "test"
+    CPP
+    system ENV.cxx, "-I#{Formula["boost1651"].opt_include}", "test.cpp", "-std=c++14", "-o", "test"
     system "./test"
   end
 end
